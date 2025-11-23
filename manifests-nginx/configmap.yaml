@@ -29,8 +29,8 @@ data:
 
         # Proxy pass example
         upstream backend {
-            server grafana-service:3000;
-            server prometheus-service:9090;
+            server grafana-service.default.svc.cluster.local:3000;
+            server prometheus-service.default.svc.cluster.local:9090;
         }
 
         server {
