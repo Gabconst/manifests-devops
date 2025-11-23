@@ -1,8 +1,4 @@
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: nginx-config
-  namespace: default
 data:
   nginx.conf: |
     user  nginx;
@@ -15,24 +11,31 @@ data:
     }
 
     http {
-        include       /etc/nginx/mime.types;
-        default_type  application/octet-stream;
+        include          /etc/nginx/mime.types;
+        default_type     application/octet-stream;
 
         log_format main '$remote_addr - $remote_user [$time_local] "$request" '
-                        '$status $body_bytes_sent "$http_referer" '
-                        '"$http_user_agent" "$http_x_forwarded_for"';
+                         '$status $body_bytes_sent "$http_referer" '
+                         '"$http_user_agent" "$http_x_forwarded_for"';
 
         access_log /var/log/nginx/access.log main;
 
-        sendfile        on;
+        sendfile         on;
         keepalive_timeout  65;
 
+        # --- INÍCIO DA CORREÇÃO ---
+        # 1. Adicione o resolvedor DNS do Kubernetes
+        # O IP 10.96.0.10 é o padrão do ClusterIP do Service kube-dns/coredns
+        resolver 10.96.0.10 valid=5s; 
+
         upstream grafana {
-            server grafana-service.default.svc.cluster.local:3000;
+            # 2. Use a sintaxe de resolução dinâmica, o Nginx resolve em tempo de execução
+            server grafana-service.default.svc.cluster.local:3000 resolve;
         }
 
         upstream prometheus {
-            server prometheus-service.default.svc.cluster.local:9090;
+            # 3. Use a sintaxe de resolução dinâmica no Upstream com 'resolve'
+            server prometheus-service.default.svc.cluster.local:9090 resolve;
         }
 
         server {
@@ -47,4 +50,11 @@ data:
                 proxy_pass http://prometheus/;
             }
         }
+        # --- FIM DA CORREÇÃO ---
     }
+kind: ConfigMap
+metadata:
+  annotations:
+    argocd.argoproj.io/tracking-id: nginx:/ConfigMap:default/nginx-config
+  name: nginx-config
+  namespace: default
