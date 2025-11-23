@@ -27,9 +27,11 @@ data:
         sendfile        on;
         keepalive_timeout  65;
 
-        # Proxy pass example
-        upstream backend {
+        upstream grafana {
             server grafana-service.default.svc.cluster.local:3000;
+        }
+
+        upstream prometheus {
             server prometheus-service.default.svc.cluster.local:9090;
         }
 
@@ -37,12 +39,12 @@ data:
             listen 80;
             server_name localhost;
 
-            location / {
-                proxy_pass http://backend;
-                proxy_set_header Host $host;
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_set_header X-Forwarded-Proto $scheme;
+            location /grafana/ {
+                proxy_pass http://grafana/;
+            }
+
+            location /prometheus/ {
+                proxy_pass http://prometheus/;
             }
         }
     }
