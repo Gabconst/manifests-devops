@@ -14,7 +14,6 @@ spec:
     metadata:
       labels:
         app: nginx
-      # 🚨 ADICIONE ESTA ANOTAÇÃO PARA FORÇAR A ATUALIZAÇÃO DO CONFIGMAP 🚨
       annotations:
         kubectl.kubernetes.io/restartedAt: "2025-11-23T22:20:00-03:00" 
     spec:

@@ -23,35 +23,25 @@ data:
         sendfile         on;
         keepalive_timeout  65;
 
-        # LINHA CORRIGIDA: Uso correto da diretiva 'resolver' (com R)
-        resolver 10.96.0.10 valid=5s; 
-
-        # --- UPSTREAMS CORRIGIDOS ---
-
-        upstream grafana {
-            # CORREÇÃO DE SINTAXE: Usa apenas o FQDN do Service e a diretiva 'resolve'
-            server grafana-service.default.svc.cluster.local resolve; 
-        }
-
-        upstream prometheus {
-            # CORREÇÃO DE SINTAXE: FQDN e 'resolve'
-            server prometheus-service.default.svc.cluster.local resolve;
-        }
-
-        # --- BLOCO SERVER (Reverse Proxy) ---
+        # REMOVIDO: A diretiva 'resolver' que estava causando falhas
+        # REMOVIDO: Os blocos 'upstream' completos, pois não são estritamente necessários
+        #           quando usamos o FQDN ou ServiceName diretamente no proxy_pass.
 
         server {
             listen 80;
             server_name localhost;
 
+            # O NGINX agora confia no DNS padrão do K8s para resolver o FQDN e a porta.
+            # O /grafana/ será reescrito pelo NGINX para o destino, e o Service do Grafana
+            # receberá a requisição corretamente.
             location /grafana/ {
-                # CORREÇÃO 404: Usa o nome do upstream + a porta do Service (3000)
-                proxy_pass http://grafana:3000;
+                # CORREÇÃO DEFINITIVA: Usa o FQDN do Service e a porta.
+                proxy_pass http://grafana-service.default.svc.cluster.local:3000;
             }
 
             location /prometheus/ {
-                # CORREÇÃO 404: Usa o nome do upstream + a porta do Service (9090)
-                proxy_pass http://prometheus:9090;
+                # CORREÇÃO DEFINITIVA: Usa o FQDN do Service e a porta.
+                proxy_pass http://prometheus-service.default.svc.cluster.local:9090;
             }
         }
     }
