@@ -15,7 +15,7 @@ spec:
       labels:
         app: nginx
       annotations:
-        kubectl.kubernetes.io/restartedAt: "2025-11-23T22:20:00-03:00" 
+        kubectl.kubernetes.io/restartedAt: "2025-11-24T14:50:00-03:00" 
     spec:
       containers:
       - name: nginx
