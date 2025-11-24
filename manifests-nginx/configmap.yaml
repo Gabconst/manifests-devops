@@ -28,22 +28,16 @@ data:
             server_name localhost;
 
             location /grafana/ {
-                # Roteia para o Serviço Grafana (porta 3000)
                 proxy_pass http://grafana-service.default.svc.cluster.local:3000;
 
-                # 🚨 CORREÇÃO CRÍTICA 1: Intercepta e reescreve o redirecionamento /login para /grafana/login
                 proxy_redirect ~^/login(.*)$ /grafana/login$1; 
                 
-                # 2. Configura a URL base que o NGINX deve usar para reescrever outros redirecionamentos.
                 proxy_redirect default; 
-                # 3. Informa o host correto para o backend Grafana.
                 proxy_set_header Host $host; 
-                # 4. Garante que o Grafana use a URL correta para o link.
                 proxy_set_header X-Real-URL $scheme://$host:$server_port/grafana;
             }
 
             location /prometheus/ {
-                # Roteia para o Serviço Prometheus (porta 9090)
                 proxy_pass http://prometheus-service.default.svc.cluster.local:9090;
                 
                 proxy_set_header Host $host;
