@@ -13,9 +13,19 @@ spec:
     metadata:
       labels:
         app: grafana
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2025-11-24T14:55:00-03:00" #
     spec:
       containers:
       - name: grafana
         image: grafana/grafana:9.5.2
         ports:
         - containerPort: 3000
+        volumeMounts:
+        - name: grafana-config-volume
+          mountPath: /etc/grafana/grafana.ini
+          subPath: grafana.ini
+      volumes:
+      - name: grafana-config-volume
+        configMap:
+          name: grafana-config
