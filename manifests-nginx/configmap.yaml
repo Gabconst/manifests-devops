@@ -23,31 +23,22 @@ data:
         sendfile         on;
         keepalive_timeout  65;
 
-        # REMOVIDO: A diretiva 'resolver' que estava causando falhas
-        # REMOVIDO: Os blocos 'upstream' completos, pois não são estritamente necessários
-        #           quando usamos o FQDN ou ServiceName diretamente no proxy_pass.
-
         server {
             listen 80;
             server_name localhost;
 
-            # O NGINX agora confia no DNS padrão do K8s para resolver o FQDN e a porta.
-            # O /grafana/ será reescrito pelo NGINX para o destino, e o Service do Grafana
-            # receberá a requisição corretamente.
             location /grafana/ {
-                # CORREÇÃO DEFINITIVA: Usa o FQDN do Service e a porta.
+                # Roteia para o Serviço Grafana (porta 3000)
                 proxy_pass http://grafana-service.default.svc.cluster.local:3000;
             }
 
             location /prometheus/ {
-                # CORREÇÃO DEFINITIVA: Usa o FQDN do Service e a porta.
+                # Roteia para o Serviço Prometheus (porta 9090)
                 proxy_pass http://prometheus-service.default.svc.cluster.local:9090;
             }
         }
     }
 kind: ConfigMap
 metadata:
-  annotations:
-    argocd.argoproj.io/tracking-id: nginx:/ConfigMap:default/nginx-config
   name: nginx-config
   namespace: default
