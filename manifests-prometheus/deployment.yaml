@@ -13,6 +13,8 @@ spec:
     metadata:
       labels:
         app: prometheus
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2025-11-24T15:05:00-03:00" 
     spec:
       containers:
       - name: prometheus
@@ -21,6 +23,8 @@ spec:
         - containerPort: 9090
         args:
         - "--config.file=/etc/prometheus/prometheus.yml"
+        - "--web.external-url=/prometheus" 
+        - "--storage.tsdb.path=/prometheus"
         volumeMounts:
         - name: config
           mountPath: /etc/prometheus
