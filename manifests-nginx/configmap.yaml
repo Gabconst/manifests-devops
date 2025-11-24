@@ -43,11 +43,11 @@ data:
             server_name localhost;
 
             location /grafana/ {
-                proxy_pass http://grafana/;
+                proxy_pass http://grafana;
             }
 
             location /prometheus/ {
-                proxy_pass http://prometheus/;
+                proxy_pass http://prometheus;
             }
         }
         # --- FIM DA CORREÇÃO ---
