@@ -6,6 +6,7 @@ metadata:
   labels:
     app: devops-app
 spec:
+  type: ClusterIP 
   selector:
     app: devops-app
   ports:
