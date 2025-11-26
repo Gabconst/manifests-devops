@@ -19,6 +19,17 @@ spec:
         - name: devops-app
           image: gabconst/devops-app:v1
           imagePullPolicy: Always
+          env:
+            - name: APP_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: devops-app-config
+                  key: APP_PORT
+            - name: APP_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: devops-app-config
+                  key: APP_NAME
           ports:
             - containerPort: 5000
           readinessProbe:

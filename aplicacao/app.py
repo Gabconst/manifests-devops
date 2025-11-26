@@ -1,18 +1,24 @@
+import os
 from flask import Flask
 from prometheus_client import Counter, generate_latest
 
+# Lendo a porta da variável de ambiente, padrão 5000
+PORT = int(os.environ.get("APP_PORT", 5000))
+APP_NAME = os.environ.get("APP_NAME", "Exemplo Padrão")
+
 app = Flask(__name__)
 
+# Definindo a métrica
 REQUEST_COUNT = Counter('app_requests_total', 'Total de requisições')
 
 @app.route("/")
 def home():
     REQUEST_COUNT.inc()
-    return "Aplicação de exemplo rodando no Kubernetes!"
+    return f"Aplicação de Exemplo ({APP_NAME}) rodando no Kubernetes!"
 
 @app.route("/metrics")
 def metrics():
     return generate_latest(), 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=PORT)
