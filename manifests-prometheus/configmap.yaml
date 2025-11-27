@@ -16,7 +16,7 @@ data:
       # -----------------------------------------
       - job_name: 'prometheus'
         static_configs:
-          - targets: ['localhost:9090']
+          - targets: ['54.204.241.160:5000']
 
       # -----------------------------------------
       # 2) Scrape da sua aplicação
