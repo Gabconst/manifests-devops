@@ -2,13 +2,11 @@ import os
 from flask import Flask
 from prometheus_client import Counter, generate_latest
 
-# Lendo a porta da variável de ambiente, padrão 5000
 PORT = int(os.environ.get("APP_PORT", 5000))
 APP_NAME = os.environ.get("APP_NAME", "Exemplo Padrão")
 
 app = Flask(__name__)
 
-# Definindo a métrica
 REQUEST_COUNT = Counter('app_requests_total', 'Total de requisições')
 
 @app.route("/")

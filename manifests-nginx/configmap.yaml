@@ -28,18 +28,15 @@ data:
             server_name localhost;
 
             location /grafana/ {
-                # Roteamento interno correto
                 proxy_pass http://grafana-service.default.svc.cluster.local:3000;
 
                 proxy_redirect /login /grafana/login; 
                 
                 proxy_buffering off;
-                
-                # Informa o host correto e a URL real (essencial para subcaminhos)
+               
                 proxy_set_header Host $host; 
                 proxy_set_header X-Real-URL $scheme://$host:$server_port/grafana;
             }
-
             location /prometheus/ {
                 # Roteia para o Serviço Prometheus (porta 9090)
                 proxy_pass http://prometheus-service.default.svc.cluster.local:9090;
